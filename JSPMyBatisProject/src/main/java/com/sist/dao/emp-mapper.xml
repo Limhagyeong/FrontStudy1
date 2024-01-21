@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.dao.emp-mapper">
+ <!-- SQL 문장 저장 
+ 	  => 1. 데이터를 받을 데이터형 설정 : resultType
+ 	     2. ?에 들어가는 값을 설정 : parameterType
+ 	     3. VO에 값을 요청시에는 
+ 	     	column명이 다른 경우에는 설정
+ 	     	vo의 변수 = column명이 같은 경우 자동 인식
+ 	     	
+ 	     class EmpVO
+ 	     {
+ 	     	private int empno; ==> 컬럼명 : empno => setEmpno()
+ 	     	private String name;  ==> 컬럼명 : ename => setEname()
+ 	     		
+ 	        ==> SELECT empno, ename as name
+ 	        	  			  ============== => 컬렴명 as 변수명	
+ 	        	  setEmpno() , setEname()
+ 	     } 
+ 	     
+ 	     4. ? 대신 사용 => index
+ 	     	#{변수명} , ${table명/컬럼명}
+ 	     	=> ''(O)     ''(X)
+ 	     	      
+ 	     	String name='홍길동'
+ 	     	WHERE name= ${name} => ''없음 => 오류
+ 	     	=> WHERE name=홍길동
+ 	     	               ======> 홍길동 으로 들어감 
+ 	     	WHERE name= #{name}
+ 	     	=> WHERE name='홍길동' 
+ 	     	
+ 	     	String table="emp"
+ 	     	FROM #{table} => 'emp'로 들어감 오류!
+ 	     	FROM ${table} => emp
+ 	======================================================= 기초!
+ 	   5. 동적쿼리
+ 	   	   이름
+ 	   	   제목 
+ 	   	   내용
+ 	   	   
+ 	   	   이름+제목
+ 	   	   이름+내용
+ 	   	   
+ 	   	   제목+내용
+ 	   	   
+ 	   	   이름 + 제목 + 내용
+ 	  6. 프로시저 호출
+ 	  ========================== XML / Annotation
+ 	  							 JSP    Spring
+ 	  	XML + Annotation => Spring-Boot	
+ 	  	SQL   Method
+ 	  	
+ 	  	XML
+ 	  	<selectKey keyProperty="no" resultType="int" order="BEFORE">
+	 	SELECT NVL(MAX(no)+1,1) as no FROM project_databoard
+	 	</selectKey> => 오라클에서 바로 복붙 
+	 
+		 Annotation
+		  @Select("SELECT * FROM blog WHERE id = #{id}")
+		
+		주의점 태그에 한개의 SQL문장만 지정할 수 있다
+		여러개 있는 경우에는 서브쿼리 이용
+		=> <select> => 데이터 검색 
+			<insert> => 데이터 추가 
+			<update> => 데이터 수정
+			<delete> => 데이터 삭제
+			<selectKey> => 자동 증가번호 부여
+			<resultMap> => JOIN
+			
+			class EmpVO
+			{
+				private int empno;
+				private String ename;
+				private DeptVO dvo=new DeptVO(); // JOIN걸려있는 경우
+			}
+			class DeptVO
+			{
+				private String dname;
+				private String loc;
+			}
+			SELECT empno,ename,dname,loc 
+			FROM emp,dept
+			WHERE emp.deptno=dept.deptno
+			
+			<resultMap type="com.sist.dao.EmpVO"> // JOIN걸려있는 경우
+				<result property="empno" column="empno"/>
+				vo.setEmpno(rs.getInt("empno"))
+				<result property="dvo.dname" column="dname"/>
+				vo.setDname(rs.getString("dname"))
+			</resultMap>
+			
+			while(rs.next())
+			{
+				EmpVO vo=new EmpVO();
+				vo.setEmpno(rs.getInt("empno"||1)) => 만들어줄필요없음 (resultMap)
+				...
+				vo.getDvo().setDname(rs.getString()) ==> resultMap으로 생성해서 들어온다 => 만들어줘야됨
+				vo.getDvo().setLoc(rs.getString())
+				
+			}
+			
+			<parameterMap> => 프로시저
+			
+		=> <if>
+		   <foreach> IN연산자 IN() , 검색 => <foreach collection="배열,list" item="">
+		   <choose> 다중 조건문
+		   <where> 조건문
+		   <set>
+		   <trim> 
+		   => prefix 접두어 => OR , AND , ( / suffix : 접미어 OR , AND , ) : 추가
+		   => prefixOverrides / suffixOverrides : 제거
+ 		   
+		   WHERE
+		   <trim prefixOverride="OR"> => 앞에있는 OR 제거
+		   <if test=="col=='name'">
+		   name LIKE ..
+		   </if>
+		    <if test=="col=='subject'">
+		   OR subject LIKE ..
+		   </if>
+		    <if test=="col=='content'">
+		   OR content LIKE ..
+		   </if>
+		   </trim>
+		   
+		    fix => 추가 Overrides => 제거
+		   <trim prefix="WHERE ename IN(" suffix=")" suffixOverrides=")">
+			<foreach collection="names" item="name" close=")" separator=",">
+			#{name} => 'name'
+			</foreach>
+			</trim>
+			
+		   MyBatis => 데이터베이스 연결 라이브러리 => ORM
+		   
+ -->
+ <!--
+  as => 1. 함수, 2. 컬럼명이 다른 경우 
+  -->
+ <select id="empListData" resultType="EmpVO">
+ SELECT empno,ename,job,mgr,TO_CHAR(hiredate,'YYYY-MM-DD') as dbday,sal,comm,deptno FROM emp
+ </select>
+  <resultMap type="com.sist.dao.EmpVO" id="empMap">
+  <result property="dvo.dname" column="dname"/>
+  <!-- 
+  	vo.getDvo().setDname(rs.getString("dname"))
+   -->
+  <result property="dvo.loc" column="loc"/>
+  </resultMap>
+  <sql id="select">
+  SELECT empno, ename, job, TO_CHAR(hiredate,'YYYY-MM-DD') as dbday, sal,
+  </sql>
+ <select id="empDeptJoinData" resultMap="empMap">
+ <include refid="select"/>
+ dname,loc
+ FROM emp JOIN dept
+ ON emp.deptno=dept.deptno
+ </select>
+	<select id="empDeptSubqueryData" resultMap="empMap">
+	 <include refid="select"/>
+	(SELECT dname FROM dept WHERE deptno=emp.deptno) as dname,
+	(SELECT loc FROM dept WHERE deptno=emp.deptno) as loc
+	FROM emp
+	</select>
+<!-- 	<select id="empData" resultType="EmpVO">
+	SELECT * FROM emp WHERE sal&lt;3000
+	</select> -->
+	<!-- 
+		List<String> 
+		int => resultType="java.lang.integer"
+	 -->
+	<select id="empNameData" resultType="String">
+	SELECT ename FROM emp
+	</select>
+	<select id="empFindData" resultType="EmpVO" parameterType="hashmap">
+	SELECT empno, ename, job, TO_CHAR(hiredate,'YYYY-MM-DD') as dbday, sal
+	FROM emp
+	WHERE ename IN
+	<!-- <trim prefix="WHERE ename IN(" suffix=")" suffixOverrides=")"> -->
+	<foreach collection="names" item="name" open= "(" close=")" separator=",">
+	#{name}
+	</foreach>
+	<!-- </trim> -->
+	</select>
+</mapper>
+
