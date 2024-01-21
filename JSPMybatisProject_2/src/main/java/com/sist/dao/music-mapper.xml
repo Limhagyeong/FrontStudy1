@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	1. SQL문장 저장 공간 => SqlSessionFactory => SQL문장을 찾아준다
+	   => 라이브러리는 자바 소스를 변경할 수 없다 (변경,요청 => XML)
+	   
+	   
+ -->
+<mapper namespace="com.sist.dao.music-mapper">
+   <select id="musicFindData" resultType="MusicVO" parameterType="hashmap">
+      SELECT no,title,singer,poster,state,album,idcrement
+      FROM genie_music
+      WHERE 
+      <trim prefixOverrides="OR"> <!-- suffixOverride 맨마지막 OR/AND OR 나 AND -->
+      <!-- 
+      	for(String fs:fsArr)
+      		item      collection
+      		prefixOverrides : 제거 / suffixOverrides
+      		prefix : 추가 / suffix
+       -->
+         <foreach collection="fsArr" item="fs">
+            <trim prefix="OR">
+               <choose> <!-- 다중 조건문 -->
+                  <!-- 인식 ''=>비교시에 정수로 변환 toString()-->
+                  <when test="fs=='T'.toString()">
+                     title LIKE '%'||#{ss}||'%'
+                  </when>
+                  
+                  <when test="fs=='S'.toString()">
+                     singer LIKE '%'||#{ss}||'%'
+                  </when>
+                  
+                  <when test="fs=='A'.toString()">
+                      album LIKE '%'||#{ss}||'%'
+                  </when>
+                  <!-- <otherwise> -->
+               </choose>
+            </trim>
+        </foreach>
+      </trim>
+   </select>
+</mapper>
