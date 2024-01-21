@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	DTD (제약조건을 건다) => XML 생성 시 순서 등 정의 보여줌
+	1. 태그 정의 
+		=> <!ELEMENT>
+		<!ELEMENT html(head?,body?)>
+		<!ELEMENT head (title?,meta*,script*,style*,link*)>
+		? => 사용 여부 결정 => null값을 허용
+		* => 0번 이상 => not null
+		| => 선택  (th|td)* => check
+ 		+ => 1번 이상
+		default => 반드시 사용
+	2. 속성 정의
+		=> <!ATTLIST>
+		id => primary key => 중복불가
+		idref => foreign key
+	3. 변수 정의
+	   => <!ENTITY>
+	    <!ENTITY nbsp ' '> => &nbsp;
+	    <!ENTITY lt '<'> => &lt;
+	    <id></id>
+ -->
+ <!ELEMENT member (list+)>
+ <!ELEMENT list (id,pwd,name,address,(phone|tel),content?)>
+ <!ELEMENT id (#PCDATA)>
+ <!ELEMENT pwd (#PCDATA)>
+ <!ELEMENT name (#PCDATA)>
+ <!ELEMENT address (#PCDATA)>
+ <!ELEMENT phone (#PCDATA)>
+ <!ELEMENT tel (#PCDATA)>
+ <!ELEMENT content (#PCDATA)>
+ 
