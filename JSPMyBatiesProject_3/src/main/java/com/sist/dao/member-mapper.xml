@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.dao.member-mapper">
+	<!-- Login 처리 -->
+	<!-- 1. id 존재 여부 -->
+	<select id="memberIdCount" resultType="int" parameterType="String">
+	SELECT COUNT(*) FROM project_member WHERE id=#{id}
+	</select>
+	<!-- 2. 비밀번호 확인 -->
+	<select id="memberPwd" resultType="MemberVO" parameterType="String"> <!-- 세션 저장 => MemberVO(id,name,admin 여부)  -->
+	SELECT id,name,admin,post,addr1,addr2,phone,email,pwd
+	FROM project_member
+	WHERE id=#{id}
+	</select>
+</mapper>

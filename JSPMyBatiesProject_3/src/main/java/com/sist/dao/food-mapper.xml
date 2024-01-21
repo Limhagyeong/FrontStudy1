@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.dao.food-mapper">
+<select id="FoodListData" resultType="FoodVO" parameterType="hashmap">
+<!-- <bind name="types" value="'%'+type+'%'"/> -->
+SELECT fno,name,poster,num
+FROM (SELECT fno,name,poster,rownum AS num
+FROM (SELECT fno,name,poster 
+FROM food_menu_house WHERE type LIKE '%'||#{type}||'%'))
+WHERE num BETWEEN #{start} AND #{end}
+</select>
+<select id="foodTotalPage" resultType="int" parameterType="String">
+<!-- <bind name="types" value="'%'+type+'%'"/> -->
+SELECT CEIL(COUNT(*)/20.0)
+FROM food_menu_house 
+WHERE type LIKE '%'||#{type}||'%'
+</select>
+</mapper>

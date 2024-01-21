@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-config.dtd">
+ <!-- 
+ 		xml
+ 		 1. 태그의 순서 , 속성의 순서 지키기
+ 		 2. 여는 태그, 닫는 태그 동일 => 명확한 계층구조
+ 		 3. 속성값 => 반드시 ""
+ 		 4. 목적 : 운영체제 호환이 좋다 => 언어 호환이 좋다
+ 		 		  => 단점 : 소스가 길어지면 속도가 저하된다 (파일이 커진다)
+ 		 		  	 스프링/마이바티스는 방지 => 분산처리
+ 		 		  => Config.xml => 환경설정과 mapper를 모아주는 역할
+ 		 		  	 = 1-mapper.xml => SQL문장 저장
+ 		 		  	 = 2-mapper.xml
+ 		 		  => 개발자 요구사항 => 순수하게 자바로만 ==> 어노테이션 (xml코드 대체)
+ 		 		  									  xml 전송 => 속도 저하 => JSON으로 보완 
+  -->
+ <configuration>
+ 	<properties resource="db.properties"/>
+ 	<typeAliases>
+ 	 <typeAlias type="com.sist.vo.FoodVO" alias="FoodVO"/>
+ 	  <typeAlias type="com.sist.vo.MemberVO" alias="MemberVO"/>
+ 	  <typeAlias type="com.sist.vo.GoodsVO" alias="GoodsVO"/>
+ 	  <typeAlias type="com.sist.vo.ReserveDayVO" alias="ReserveDayVO"/>
+ 	  <typeAlias type="com.sist.vo.ReserveInfoVO" alias="ReserveInfoVO"/>
+ 	  <typeAlias type="com.sist.vo.ReserveTimeVO" alias="ReserveTimeVO"/>
+ 	   <typeAlias type="com.sist.vo.CartVO" alias="CartVO"/>
+ 	   <typeAlias type="com.sist.vo.SeoulVO" alias="SeoulVO"/>
+ 	</typeAliases><!-- vo 등록 -->
+ 	<environments default="development"><!-- 데이터베이스 정보 -->
+ 		<environment id="development">
+ 		<transactionManager type="JDBC"/> 
+ 		<dataSource type="POOLED">
+ 		<property name="driver" value="${driver}"/>
+ 		<property name="url" value="${url}"/>
+ 		<property name="username" value="${username}"/>
+ 		<property name="password" value="${password}"/>
+ 		</dataSource>
+ 		</environment>
+ 	</environments>
+ 	<mappers>
+ 	<mapper resource="com/sist/dao/food-mapper.xml"/>
+ 	<mapper resource="com/sist/dao/member-mapper.xml"/>
+ 	<mapper resource="com/sist/dao/reserve-mapper.xml"/>
+    <mapper resource="com/sist/dao/goods-mapper.xml"/>
+    <mapper resource="com/sist/dao/seoul-mapper.xml"/>
+ 	</mappers>
+ </configuration>

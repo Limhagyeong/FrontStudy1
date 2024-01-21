@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+<bean id="Main" class="com.sist.model.MainModel"></bean>
+<bean id="Food" class="com.sist.model.FoodModel"></bean>
+<bean id="Member" class="com.sist.model.MemberModel"></bean>
+<bean id="Goods" class="com.sist.model.GoodsModel"></bean>
+<bean id="Reserve" class="com.sist.model.ReserveModel"></bean>
+<bean id="MyPage" class="com.sist.model.MyPageModel"></bean>
+<bean id="Admin" class="com.sist.model.AdminModel"></bean>
+<bean id="Seoul" class="com.sist.model.SeoulModel"></bean>
+<bean id="Reply" class="com.sist.model.ReplyModel"></bean>
+</beans>
